@@ -1,35 +1,64 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useContext } from 'react'
+import { RecoilRoot, useRecoilValue, useRecoilState, useSetRecoilState,selector} from 'recoil'
 import './App.css'
+import { Countcontext } from './Context'
+import {countAtom} from './store/atoms/count'
+import {isEvenSelector} from './store/selector/evenSelector'
+
 
 function App() {
-  const [count, setCount] = useState(0)
+  
 
+
+  // wrap anyone that wants to use  the teleported value inside the provider
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+    <RecoilRoot>
+     <Count />  
+     <br>
+     </br> 
+     <EvenRender/>
+    </RecoilRoot> 
     </>
   )
 }
+const EvenRender = ()=> {
+  const even = useRecoilValue(isEvenSelector);
+  return<div>
+    {even ? "this is even":null}
+  </div>
+}
 
+const Count = ()=>{
+  return<>
+  <CountRender/>
+  <Button  />
+  </>
+}
+
+const CountRender = ()=>{
+  const count = useRecoilValue(countAtom);
+  return <div>  
+    {count}
+  </div>
+}
+
+// const Button = ()=>{
+//   const [count,setCount] = useRecoilState(countAtom);
+
+//   return<>
+//   <button onClick={()=>{ setCount(count+1)}} >increment</button>
+//   <button onClick={()=>{ setCount(count-1)}} >decrement</button>
+//   </>
+// }
+
+const Button = ()=>{
+  const setCount = useSetRecoilState(countAtom);
+  console.log("to stop unwanted rendering ")
+
+  return<>
+  <button onClick={()=>{ setCount(count => count+1)}} >increment</button>
+  <button onClick={()=>{ setCount(count => count-1)}} >decrement</button>
+  </>
+}
 export default App
